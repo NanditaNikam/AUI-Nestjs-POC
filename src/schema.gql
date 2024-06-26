@@ -15,9 +15,18 @@ type Query {
 
 type Mutation {
   createUser(data: UserInputType!): UserOutputType!
+  updateUser(data: UpdateUserInputType!): UserOutputType!
+  removeUser(id: Float!): Boolean!
 }
 
 input UserInputType {
+  firstName: String!
+  lastName: String!
+  age: Int!
+}
+
+input UpdateUserInputType {
+  id: Int!
   firstName: String!
   lastName: String!
   age: Int!
