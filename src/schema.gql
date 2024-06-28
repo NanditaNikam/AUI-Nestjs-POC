@@ -11,17 +11,22 @@ type PostOutputType {
 }
 
 type UserOutputType {
-  id: Int!
+  id: Long!
   firstName: String!
   lastName: String!
   age: Int!
   posts: [PostOutputType!]
 }
 
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar Long
+
 type Query {
   users: [UserOutputType!]!
-  user(id: Int!): UserOutputType!
-  getUserWithPosts(id: Int!): UserOutputType!
+  user(id: Long!): UserOutputType!
+  getUserWithPosts(id: Long!): UserOutputType!
   posts: [PostOutputType!]!
   post(id: Int!): PostOutputType!
   getPostByUserId(userId: Int!): [PostOutputType!]!
@@ -29,8 +34,8 @@ type Query {
 
 type Mutation {
   createUser(data: UserInputType!): UserOutputType!
-  updateUser(data: UpdateUserInputType!): UserOutputType!
-  removeUser(id: Int!): Boolean!
+  updateUser(id: Long!, data: UpdateUserInputType!): UserOutputType!
+  removeUser(id: Long!): Boolean!
   createPost(data: PostInputType!): PostOutputType!
   updatePost(data: UpdatePostInputType!): PostOutputType!
   removePost(id: Int!): Boolean!
@@ -39,11 +44,11 @@ type Mutation {
 input UserInputType {
   firstName: String!
   lastName: String!
-  age: Int!
+  age: Float!
 }
 
 input UpdateUserInputType {
-  id: Int!
+  id: Float!
   firstName: String!
   lastName: String!
   age: Int!

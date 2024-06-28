@@ -12,6 +12,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserInputType } from './user-types/update-user-input';
 
 @Controller('user')
 export class UserController {
@@ -34,8 +35,11 @@ export class UserController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateUserInputType: UpdateUserInputType,
+  ) {
+    return this.userService.update(+id, updateUserInputType);
   }
 
   @Delete(':id')

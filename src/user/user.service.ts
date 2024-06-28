@@ -5,35 +5,75 @@ import { User } from './entities/user.entity';
 import { UserInputType } from '../user/user-types/user-inputType';
 import { Post } from 'src/posts/entity/posts.entity';
 import { UserOutputType } from './user-types/user.outputType';
+import { InjectModel, Model } from 'nestjs-dynamoose';
+import { UserDdb, UserDdbKey, userTableName } from './ddb/user-ddb.schema';
+import { UpdateUserInputType } from './user-types/update-user-input';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Post) private readonly postRepository: Repository<Post>,
+    @InjectModel(userTableName)
+    private readonly userDdbModel: Model<UserDdb, UserDdbKey>,
   ) {}
 
-  async create(data: UserInputType): Promise<User> {
-    const user = this.userRepository.create(data);
-    return this.userRepository.save(user);
+  async create(data: UserInputType): Promise<UserOutputType> {
+    return this.userDdbModel.create({
+      ...data,
+      id: new Date().getTime(),
+    });
   }
 
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
+  async findAll(): Promise<UserOutputType[]> {
+    const users = await this.userDdbModel.scan().exec();
+    return users.map((user) => ({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      age: user.age,
+    }));
   }
 
-  findOne(id: number) {
-    return this.userRepository.findOne({ where: { id } });
+  async findOne(id: number): Promise<UserOutputType> {
+    const user = await this.userDdbModel.get({ id: Number(id) });
+    if (!user) throw new NotFoundException(`User with ID ${id} not found`);
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      age: user.age,
+    };
   }
 
-  async update(id: number, data: UserInputType): Promise<User> {
-    await this.userRepository.update(id, data);
-    return this.userRepository.findOne({ where: { id } });
+  async update(id: number, data: UpdateUserInputType): Promise<UserOutputType> {
+    const user = await this.userDdbModel.get({ id: Number(id) });
+    if (!user) throw new NotFoundException(`User with ID ${id} not found`);
+    const updatedUser = await this.userDdbModel.update(
+      { id: Number(id) },
+      {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        age: data.age,
+      },
+    );
+    return {
+      id: updatedUser.id,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      age: updatedUser.age,
+    };
   }
+
 
   async remove(id: number): Promise<boolean> {
-    const result = await this.userRepository.delete(id);
-    return result.affected > 0;
+    try {
+      await this.userDdbModel.delete({ id: Number(id) });
+      return true;
+    } catch (error) {
+      console.log(`Error removing ${id}`, error);
+      return false;
+    }
   }
 
   async getUserWithPosts(id: number): Promise<UserOutputType> {

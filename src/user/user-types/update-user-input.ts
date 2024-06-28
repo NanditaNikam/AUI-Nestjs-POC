@@ -1,8 +1,7 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-
 @InputType()
 export class UpdateUserInputType {
-  @Field((type) => Int)
+  @Field()
   id: number;
 
   @Field()
@@ -11,6 +10,6 @@ export class UpdateUserInputType {
   @Field()
   lastName: string;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   age: number;
 }
