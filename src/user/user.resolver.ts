@@ -1,8 +1,8 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { UserInputType } from './user-inputType';
-import { UserOutputType } from './user.outputType';
-import { UpdateUserInputType } from './update-user-input';
+import { UserInputType } from '../user/user-types/user-inputType';
+import { UserOutputType } from '../user/user-types/user.outputType';
+import { UpdateUserInputType } from '../user/user-types/update-user-input';
 
 @Resolver(() => UserOutputType)
 export class UserResolver {
@@ -11,6 +11,13 @@ export class UserResolver {
   @Query(() => [UserOutputType])
   async users(): Promise<UserOutputType[]> {
     return this.userService.findAll();
+  }
+
+  @Query(() => UserOutputType, { name: 'user' })
+  async user(
+    @Args('id', { type: () => Int }) id: number,
+  ): Promise<UserOutputType> {
+    return this.userService.findOne(id);
   }
 
   @Mutation(() => UserOutputType)
@@ -25,10 +32,25 @@ export class UserResolver {
     return this.userService.update(data.id, data);
   }
 
+ 
   @Mutation(() => Boolean)
   async removeUser(
-    @Args('id', { type: () => Number }) id: number,
+    @Args('id', { type: () => Int }) id: number,
   ): Promise<boolean> {
-    return this.userService.remove(id);
+    try {
+      await this.userService.remove(id);
+      return true;
+    } catch (error) {
+      console.log('Error in removing user id');
+      return false;
+    }
+  }
+
+
+  @Query(() => UserOutputType)
+  async getUserWithPosts(
+    @Args('id', { type: () => Int }) id: number,
+  ): Promise<UserOutputType> {
+    return this.userService.getUserWithPosts(id);
   }
 }

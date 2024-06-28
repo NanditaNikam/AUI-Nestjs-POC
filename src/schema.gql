@@ -2,21 +2,38 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type PostOutputType {
+  id: Int!
+  userId: Int!
+  Title: String!
+  Description: String!
+  createdBy: UserOutputType
+}
+
 type UserOutputType {
   id: Int!
   firstName: String!
   lastName: String!
   age: Int!
+  posts: [PostOutputType!]
 }
 
 type Query {
   users: [UserOutputType!]!
+  user(id: Int!): UserOutputType!
+  getUserWithPosts(id: Int!): UserOutputType!
+  posts: [PostOutputType!]!
+  post(id: Int!): PostOutputType!
+  getPostByUserId(userId: Int!): [PostOutputType!]!
 }
 
 type Mutation {
   createUser(data: UserInputType!): UserOutputType!
   updateUser(data: UpdateUserInputType!): UserOutputType!
-  removeUser(id: Float!): Boolean!
+  removeUser(id: Int!): Boolean!
+  createPost(data: PostInputType!): PostOutputType!
+  updatePost(data: UpdatePostInputType!): PostOutputType!
+  removePost(id: Int!): Boolean!
 }
 
 input UserInputType {
@@ -30,4 +47,17 @@ input UpdateUserInputType {
   firstName: String!
   lastName: String!
   age: Int!
+}
+
+input PostInputType {
+  Title: String!
+  Description: String!
+  userId: Int!
+}
+
+input UpdatePostInputType {
+  id: Int!
+  Title: String!
+  Description: String!
+  userId: Int!
 }
