@@ -1,14 +1,14 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { GraphQLLong } from 'graphql-scalars';
 import { UserOutputType } from 'src/user/user-types/user.outputType';
 
 @ObjectType()
 export class PostOutputType {
-
-  @Field((type) => Int)
+  @Field(() => GraphQLLong)
   id: number;
 
-  @Field((type) => Int)
-  userId: number;
+  @Field(() => Int, { nullable: true })
+  userId?: number;
 
   @Field()
   Title: string;
@@ -16,7 +16,6 @@ export class PostOutputType {
   @Field()
   Description: string;
 
-  @Field(() => UserOutputType, {nullable: true})
-  createdBy: UserOutputType 
-
+  @Field(() => UserOutputType, { nullable: true })
+  createdBy?: UserOutputType;
 }

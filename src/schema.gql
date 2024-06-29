@@ -3,15 +3,20 @@
 # ------------------------------------------------------
 
 type PostOutputType {
-  id: Int!
-  userId: Int!
+  id: Long!
+  userId: Int
   Title: String!
   Description: String!
   createdBy: UserOutputType
 }
 
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar Long
+
 type UserOutputType {
-  id: Int!
+  id: Long!
   firstName: String!
   lastName: String!
   age: Int!
@@ -20,30 +25,30 @@ type UserOutputType {
 
 type Query {
   users: [UserOutputType!]!
-  user(id: Int!): UserOutputType!
-  getUserWithPosts(id: Int!): UserOutputType!
+  user(id: Long!): UserOutputType!
+  getUserWithPosts(id: Long!): UserOutputType!
   posts: [PostOutputType!]!
-  post(id: Int!): PostOutputType!
+  post(id: Long!): PostOutputType!
   getPostByUserId(userId: Int!): [PostOutputType!]!
 }
 
 type Mutation {
   createUser(data: UserInputType!): UserOutputType!
-  updateUser(data: UpdateUserInputType!): UserOutputType!
-  removeUser(id: Int!): Boolean!
+  updateUser(id: Long!, data: UpdateUserInputType!): UserOutputType!
+  removeUser(id: Long!): Boolean!
   createPost(data: PostInputType!): PostOutputType!
-  updatePost(data: UpdatePostInputType!): PostOutputType!
-  removePost(id: Int!): Boolean!
+  updatePost(id: Long!, data: UpdatePostInputType!): PostOutputType!
+  removePost(id: Long!): Boolean!
 }
 
 input UserInputType {
   firstName: String!
   lastName: String!
-  age: Int!
+  age: Float!
 }
 
 input UpdateUserInputType {
-  id: Int!
+  id: Float!
   firstName: String!
   lastName: String!
   age: Int!
@@ -52,12 +57,12 @@ input UpdateUserInputType {
 input PostInputType {
   Title: String!
   Description: String!
-  userId: Int!
+  userId: Int
 }
 
 input UpdatePostInputType {
-  id: Int!
+  id: Long!
   Title: String!
   Description: String!
-  userId: Int!
+  userId: Int
 }

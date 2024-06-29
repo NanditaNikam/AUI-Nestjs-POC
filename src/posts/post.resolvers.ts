@@ -3,6 +3,7 @@ import { PostOutputType } from './post-types/post-outputType';
 import { PostService } from './post.service';
 import { PostInputType } from './post-types/post-inputType';
 import { UpdatePostInputType } from './post-types/update-post-input';
+import { GraphQLLong } from 'graphql-scalars';
 
 @Resolver(() => PostOutputType)
 export class PostResolver {
@@ -15,7 +16,7 @@ export class PostResolver {
 
   @Query(() => PostOutputType)
   async post(
-    @Args('id', { type: () => Int }) id: number,
+    @Args('id', { type: () => GraphQLLong }) id: number,
   ): Promise<PostOutputType> {
     return this.postService.findOne(id);
   }
@@ -34,15 +35,22 @@ export class PostResolver {
 
   @Mutation(() => PostOutputType)
   async updatePost(
+    @Args('id', { type: () => GraphQLLong }) id: number,
     @Args('data') data: UpdatePostInputType,
   ): Promise<PostOutputType> {
-    return this.postService.update(data.id, data);
+    return this.postService.update(id, data);
   }
 
   @Mutation(() => Boolean)
   async removePost(
-    @Args('id', { type: () => Int }) id: number,
+    @Args('id', { type: () => GraphQLLong }) id: number,
   ): Promise<boolean> {
-    return this.postService.remove(id);
+    try {
+      await this.postService.remove(id);
+      return true;
+    } catch (error) {
+      console.log('Error in removing post', error);
+      return false;
+    }
   }
 }

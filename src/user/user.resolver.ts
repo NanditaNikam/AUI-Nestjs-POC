@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { UserInputType } from '../user/user-types/user-inputType';
 import { UserOutputType } from '../user/user-types/user.outputType';
 import { UpdateUserInputType } from '../user/user-types/update-user-input';
+import { GraphQLLong } from 'graphql-scalars';
 
 @Resolver(() => UserOutputType)
 export class UserResolver {
@@ -15,7 +16,7 @@ export class UserResolver {
 
   @Query(() => UserOutputType, { name: 'user' })
   async user(
-    @Args('id', { type: () => Int }) id: number,
+    @Args('id', { type: () => GraphQLLong }) id: number,
   ): Promise<UserOutputType> {
     return this.userService.findOne(id);
   }
@@ -27,29 +28,28 @@ export class UserResolver {
 
   @Mutation(() => UserOutputType)
   async updateUser(
+    @Args('id', { type: () => GraphQLLong }) id: number,
     @Args('data') data: UpdateUserInputType,
   ): Promise<UserOutputType> {
-    return this.userService.update(data.id, data);
+    return this.userService.update(id, data);
   }
 
- 
   @Mutation(() => Boolean)
   async removeUser(
-    @Args('id', { type: () => Int }) id: number,
+    @Args('id', { type: () => GraphQLLong }) id: number,
   ): Promise<boolean> {
     try {
       await this.userService.remove(id);
       return true;
     } catch (error) {
-      console.log('Error in removing user id');
+      console.log('Error in removing user id', error);
       return false;
     }
   }
 
-
   @Query(() => UserOutputType)
   async getUserWithPosts(
-    @Args('id', { type: () => Int }) id: number,
+    @Args('id', { type: () => GraphQLLong }) id: number,
   ): Promise<UserOutputType> {
     return this.userService.getUserWithPosts(id);
   }

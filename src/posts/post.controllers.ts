@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { UpdatePostInputType } from './post-types/update-post-input';
 
 @Controller('post')
 export class PostController {
@@ -34,8 +34,11 @@ export class PostController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postService.update(+id, updatePostDto);
+  update(
+    @Param('id') id: string,
+    @Body() updatePostInputType: UpdatePostInputType,
+  ) {
+    return this.postService.update(+id, updatePostInputType);
   }
 
   @Delete(':id')

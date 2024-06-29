@@ -7,6 +7,7 @@ import { join } from 'path';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { PostModule } from './posts/post.module';
+import { DynamooseModule } from 'nestjs-dynamoose';
 
 @Module({
   imports: [
@@ -24,6 +25,16 @@ import { PostModule } from './posts/post.module';
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       // logging: true,
       synchronize: true,
+    }),
+    DynamooseModule.forRoot({
+      aws: {
+        region: 'us-east-1',
+      },
+      local: false,
+      table: {
+        create: true,
+        prefix: 'Nandita-Onboarding',
+      },
     }),
     UserModule,
     PostModule,
